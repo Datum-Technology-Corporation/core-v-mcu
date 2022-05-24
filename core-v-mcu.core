@@ -10,7 +10,7 @@ description: CORE-V MCU Top.
 filesets:
   files_rtl_generic:
     depend:
-    - datumtc.ca::pulp_platform_axi
+    - pulp-platform.org::axi
     - pulp-platform.org::common_cells
     - pulp-platform.org::riscv_dbg
     - pulp-platform.org::tech_cells_generic
