@@ -438,7 +438,7 @@ module axi_lite_to_apb_intf #(
 
   axi_req_t                     axi_req;
   axi_resp_t                    axi_resp;
-  apb_req_t   [NoApbSlaves-1:0] apb_req;
+  apb_req_t   [NoApbSlaves:0] apb_req;
   apb_resp_t  [NoApbSlaves-1:0] apb_resp;
   logic       [SelIdxWidth-1:0] apb_sel;
 
