@@ -12,8 +12,9 @@
 `include "pulp_peripheral_defines.svh"
 
 module core_v_mcu #(
-    parameter USE_FPU  = 0,
-    parameter USE_HWPE = 0
+    parameter USE_CORES = 1,
+    parameter USE_FPU   = 0,
+    parameter USE_HWPE  = 0
 ) (
     input                                jtag_tck_i,
     input                                jtag_tdi_i,
@@ -336,6 +337,7 @@ module core_v_mcu #(
 
 
   soc_domain #(
+      .USE_CORES         (USE_CORES),
       .USE_FPU           (USE_FPU),
       .USE_HWPE          (USE_HWPE),
       .AXI_ADDR_WIDTH    (AXI_ADDR_WIDTH),

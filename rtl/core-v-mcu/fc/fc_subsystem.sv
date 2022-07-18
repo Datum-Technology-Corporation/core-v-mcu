@@ -10,6 +10,7 @@
 `include "pulp_soc_defines.svh"
 
 module fc_subsystem #(
+    parameter USE_CORES           = 1,
     parameter USE_FPU             = 0,
     parameter USE_HWPE            = 0,
     parameter N_EXT_PERF_COUNTERS = 1,
@@ -152,63 +153,76 @@ module fc_subsystem #(
 
 
 
-  cv32e40p_core #(
-      .FPU(0),
-      .NUM_MHPMCOUNTERS(1),
-      .PULP_CLUSTER(0),
-      .PULP_XPULP(0),
-      .PULP_ZFINX(0)
-  ) lFC_CORE (
-      .clk_i              (clk_i),
-      .rst_ni             (rst_ni),
-      .pulp_clock_en_i    (1'b1),
-      .scan_cg_en_i       (test_en_i),
-      .boot_addr_i        (boot_addr),
-      .mtvec_addr_i       ('0),
-      .dm_halt_addr_i     (32'h1A110800),
-      .hart_id_i          (hart_id),
-      .dm_exception_addr_i(32'h1a11080c),
+  generate
+    if (USE_CORES == 1) begin
+      cv32e40p_core #(
+          .FPU(0),
+          .NUM_MHPMCOUNTERS(1),
+          .PULP_CLUSTER(0),
+          .PULP_XPULP(0),
+          .PULP_ZFINX(0)
+      ) lFC_CORE (
+          .clk_i              (clk_i),
+          .rst_ni             (rst_ni),
+          .pulp_clock_en_i    (1'b1),
+          .scan_cg_en_i       (test_en_i),
+          .boot_addr_i        (boot_addr),
+          .mtvec_addr_i       ('0),
+          .dm_halt_addr_i     (32'h1A110800),
+          .hart_id_i          (hart_id),
+          .dm_exception_addr_i(32'h1a11080c),
 
-      // Instruction Memory Interface
-      .instr_addr_o  (core_instr_addr),
-      .instr_req_o   (core_instr_req),
-      .instr_rdata_i (core_instr_rdata),
-      .instr_gnt_i   (core_instr_gnt),
-      .instr_rvalid_i(core_instr_rvalid),
+          // Instruction Memory Interface
+          .instr_addr_o  (core_instr_addr),
+          .instr_req_o   (core_instr_req),
+          .instr_rdata_i (core_instr_rdata),
+          .instr_gnt_i   (core_instr_gnt),
+          .instr_rvalid_i(core_instr_rvalid),
 
-      // Data memory interface
-      .data_addr_o  (core_data_addr),
-      .data_req_o   (core_data_req),
-      .data_be_o    (core_data_be),
-      .data_rdata_i (core_data_rdata),
-      .data_we_o    (core_data_we),
-      .data_gnt_i   (core_data_gnt),
-      .data_wdata_o (core_data_wdata),
-      .data_rvalid_i(core_data_rvalid),
+          // Data memory interface
+          .data_addr_o  (core_data_addr),
+          .data_req_o   (core_data_req),
+          .data_be_o    (core_data_be),
+          .data_rdata_i (core_data_rdata),
+          .data_we_o    (core_data_we),
+          .data_gnt_i   (core_data_gnt),
+          .data_wdata_o (core_data_wdata),
+          .data_rvalid_i(core_data_rvalid),
 
-      // apu-interconnect
-      // handshake signals
-      .apu_req_o     (apu_req),
-      .apu_gnt_i     (1'b0),  //(apu_gnt),
-      .apu_operands_o(apu_operands),
-      .apu_op_o      (apu_op),
-      .apu_flags_o   (apu_flags),
-      .apu_rvalid_i  (1'b0),  // (apu_rvalid),
-      .apu_result_i  (32'b0),  //(apu_rdata),
-      .apu_flags_i   ('0),  //(apu_rflags),
+          // apu-interconnect
+          // handshake signals
+          .apu_req_o     (apu_req),
+          .apu_gnt_i     (1'b0),  //(apu_gnt),
+          .apu_operands_o(apu_operands),
+          .apu_op_o      (apu_op),
+          .apu_flags_o   (apu_flags),
+          .apu_rvalid_i  (1'b0),  // (apu_rvalid),
+          .apu_result_i  (32'b0),  //(apu_rdata),
+          .apu_flags_i   ('0),  //(apu_rflags),
 
 
-      .irq_i    (r_int),
-      .irq_ack_o(core_irq_ack_o),
-      .irq_id_o (core_irq_ack_id_o),
+          .irq_i    (r_int),
+          .irq_ack_o(core_irq_ack_o),
+          .irq_id_o (core_irq_ack_id_o),
 
-      .debug_req_i      (debug_req_i),
-      .debug_havereset_o(),
-      .debug_running_o  (),
-      .debug_halted_o   (stoptimer_o),
-      .fetch_enable_i   (fetch_en_i),
-      .core_sleep_o     ()
-  );
+          .debug_req_i      (debug_req_i),
+          .debug_havereset_o(),
+          .debug_running_o  (),
+          .debug_halted_o   (stoptimer_o),
+          .fetch_enable_i   (fetch_en_i),
+          .core_sleep_o     ()
+      );
+    end
+    else begin
+      assign apu_req           = 0;
+      assign apu_operands      = 0;
+      assign apu_op            = 0;
+      assign apu_flags         = 0;
+      assign core_irq_ack_o    = 0;
+      assign core_irq_ack_id_o = 0;
+      assign stoptimer_o       = 0;
+    end
+  endgenerate
   assign supervisor_mode_o = 1'b1;
   /*
   cv32e40p_fp_wrapper fp_wrapper_i (

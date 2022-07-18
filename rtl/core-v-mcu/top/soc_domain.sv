@@ -15,6 +15,7 @@
 module soc_domain
   import dm::*;
 #(
+    parameter USE_CORES = 0,
     parameter USE_FPU = 0,
     parameter USE_HWPE = 0,
     parameter USE_CLUSTER_EVENT = 1,
@@ -408,6 +409,7 @@ module soc_domain
 `endif
 
   fc_subsystem #(
+      .USE_CORES(USE_CORES),
       .USE_HWPE(USE_HWPE)
   ) fc_subsystem_i (
       .clk_i            (s_soc_clk),
