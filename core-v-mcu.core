@@ -250,6 +250,13 @@ targets:
         - -disable_sem2009
         xmsim_options:
         - -sv_lib ../../../tb/uartdpi/uartdpi.so
+      # iSim (True North Silicon): `fusesoc --tool=isimtn`, the backend that
+      # ships with iSim.  The UART DPI model is loaded at run time, the way
+      # modelsim and xcelium load it above -- build it first with
+      # `make pseudo-uart`.  iSim spells the run-time load `+sv_lib=`.
+      isimtn:
+        isim_run_options:
+        - +sv_lib=../../../tb/uartdpi/uartdpi.so
       xsim:
         xelab_options:
         - --define XSIM
