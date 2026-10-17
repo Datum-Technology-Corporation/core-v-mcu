@@ -184,9 +184,12 @@ Silicon's edalize fork. Two installs, in this order, into the Python environment
 your `fusesoc` runs from:
 
     pip install fusesoc
-    pip install --no-deps --force-reinstall git+https://github.com/Datum-Technology-Corporation/edalize.git
+    pip install --force-reinstall git+https://github.com/Datum-Technology-Corporation/edalize.git
 
-`isim`, `isim-vlog`, `isim-vcom` and `isim-elab` must be on `PATH`. Then, from
+(two separate installs: pip warns that fusesoc pins `edalize>=0.4.1`, which the
+fork's development version number does not satisfy, and the warning is all that
+happens; one `pip install fusesoc git+...` resolves that pin by downgrading
+fusesoc.) `isim`, `isim-vlog`, `isim-vcom` and `isim-elab` must be on `PATH`. Then, from
 this checkout -- the pseudo-UART DPI model first, as for every simulator:
 
     make pseudo-uart
