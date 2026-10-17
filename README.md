@@ -174,3 +174,27 @@ Two important things to note.
 1. [Schiavone, Pasquale Davide, et al. "Quentin: an ultra-low-power pulpissimo soc in 22nm fdx." 2018 IEEE SOI-3D-Subthreshold Microelectronics Technology Unified Conference (S3S). IEEE, 2018.](https://ieeexplore.ieee.org/abstract/document/8640145)
 
 2. [Schiavone, Pasquale Davide, et al. "Arnold: An eFPGA-Augmented RISC-V SoC for Flexible and Low-Power IoT End Nodes." IEEE Transactions on Very Large Scale Integration (VLSI) Systems 29.4 (2021): 677-690.](https://ieeexplore.ieee.org/document/9369856)
+
+## Simulating with iSim
+
+[iSim](https://tn-si.com) (True North Silicon) runs this design's testbench
+through FuseSoC with its `.core` files untouched. FuseSoC selects a simulator
+through **edalize**; iSim's backend is `isimtn` and lives in True North
+Silicon's edalize fork. Two installs, in this order, into the Python environment
+your `fusesoc` runs from:
+
+    pip install fusesoc
+    pip install --force-reinstall git+https://github.com/Datum-Technology-Corporation/edalize.git
+
+(two separate installs: pip warns that fusesoc pins `edalize>=0.4.1`, which the
+fork's development version number does not satisfy, and the warning is all that
+happens; one `pip install fusesoc git+...` resolves that pin by downgrading
+fusesoc.) `isim`, `isim-vlog`, `isim-vcom` and `isim-elab` must be on `PATH`. Then, from
+this checkout -- the pseudo-UART DPI model first, as for every simulator:
+
+    make pseudo-uart
+    fusesoc --cores-root . run --tool=isimtn --target=sim openhwgroup.org:systems:core-v-mcu
+
+sets up, analyses, elaborates and runs `core_v_mcu_tb` (the `sim` target's
+`isimtn` block loads `tb/uartdpi/uartdpi.so`, the way the modelsim and xcelium
+blocks do).
