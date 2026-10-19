@@ -1,0 +1,27 @@
+CAPI=2:
+
+# Copyright 2021 OpenHW Group
+# Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+name: openhwgroup.org:ip:includes
+description: The shared defines headers every `include "pulp_*_defines.svh" resolves to.
+
+# Until now only the top-level core's fileset put this directory on the
+# include path, so a leaf core built on its own (apb_gpio: `include
+# "pulp_soc_defines.svh") had none.  A leaf that needs these headers now
+# declares the dependency itself.
+
+filesets:
+  files_includes:
+    files:
+    - periph_bus_defines.svh: {is_include_file: true}
+    - pulp_peripheral_defines.svh: {is_include_file: true}
+    - pulp_soc_defines.svh: {is_include_file: true}
+    - soc_mem_map.svh: {is_include_file: true}
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+    - files_includes
