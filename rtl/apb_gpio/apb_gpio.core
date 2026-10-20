@@ -9,6 +9,8 @@ description: APB GPIO interface.
 
 filesets:
   files_rtl:
+    depend:
+    - openhwgroup.org:ip:includes
     files:
     - rtl/apb_gpio.sv
     file_type: systemVerilogSource
